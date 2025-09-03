@@ -1,0 +1,68 @@
+version: '3'
+services:
+  master-restore:
+    image: greenplum:${RESTORE_TAG}
+    container_name: master-restore
+    hostname: master
+    ports:
+      - "${EXPOSE_RESTORE_MASTER_PORT}:5432"
+    environment:
+      - GREENPLUM_DEPLOYMENT=master
+      - GREENPLUM_GPPERFMON_ENABLE=true
+      - GREENPLUM_DISKQUOTA_ENABLE=true
+      - GREENPLUM_WALG_ENABLE=true
+      - GREENPLUM_PXF_ENABLE=true
+      - GREENPLUM_PASSWORD_FILE=/run/secrets/gpdb_password
+      - GREENPLUM_GPMON_PASSWORD_FILE=/run/secrets/gpmon_password
+    secrets:
+      - gpdb_password
+      - gpmon_password
+    volumes:
+      - ../docker-compose/conf/${CONFIG_FOLDER}/gpinitsystem_config_no_mirrors:/tmp/gpinitsystem_config
+      - ../docker-compose/conf/hostfile_gpinitsystem:/tmp/hostfile_gpinitsystem
+      - ../docker-compose/conf/ssh/id_rsa:/home/gpadmin/.ssh/id_rsa
+      - ../docker-compose/conf/ssh/id_rsa.pub:/home/gpadmin/.ssh/id_rsa.pub
+      - ./wal-g/conf/${CONFIG_FOLDER}/wal-g.yaml:/tmp/wal-g.yaml
+      - ./wal-g/conf/wal-g_restore.json:/tmp/wal-g_restore.json
+    depends_on:
+      - segment1-restore
+      - segment2-restore
+    networks:
+      - greenplum-restore
+
+  segment1-restore:
+    image: greenplum:${RESTORE_TAG}
+    container_name: segment1-restore
+    hostname: segment1
+    command: /start_gpdb.sh "00:primary" "01:primary"
+    environment:
+      - GREENPLUM_DEPLOYMENT=segment
+    volumes:
+      - ../docker-compose/conf/ssh/authorized_keys:/tmp/authorized_keys
+      - ./wal-g/conf/${CONFIG_FOLDER}/wal-g.yaml:/tmp/wal-g.yaml
+    stop_grace_period: 60s
+    networks:
+      - greenplum-restore
+
+  segment2-restore:
+    image: greenplum:${RESTORE_TAG}
+    container_name: segment2-restore
+    hostname: segment2
+    command: /start_gpdb.sh "00:primary" "01:primary"
+    environment:
+      - GREENPLUM_DEPLOYMENT=segment
+    volumes:
+      - ../docker-compose/conf/ssh/authorized_keys:/tmp/authorized_keys
+      - ./wal-g/conf/${CONFIG_FOLDER}/wal-g.yaml:/tmp/wal-g.yaml
+    stop_grace_period: 60s
+    networks:
+      - greenplum-restore
+
+networks:
+  greenplum-restore:
+
+secrets:
+  gpdb_password:
+    file: ../docker-compose/secrets/gpdb_password
+  gpmon_password:
+    file: ../docker-compose/secrets/gpmon_password

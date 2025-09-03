@@ -1,0 +1,4 @@
+docker-compose/secrets/*
+docker-compose/.secrets/*
+!docker-compose/secrets/.gitkeep
+.vscode/*
