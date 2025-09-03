@@ -1,0 +1,39 @@
+===
+Diferencias entre 7.4.1 y 7.1.0
+===
+
+Esto es lo que 7.4.1 tiene y que 7.1.0 no, con versión de introducción incluida:
+
+1. Extensiones nuevas
+
+    * pg_cron - agendador de jobs SQL (v7.2.0)
+    * 3DCityDB - soporte de modelos urbanos 3D (v7.2.0)
+    * H3 - indexación espacial hexagonal de Uber (v7.2.0)
+    * orafce_ext - funciones de compatibilidad Oracle (v7.2.0)
+    * Pointcloud - soporte de datos LIDAR (v7.4.0)
+    * pgRouting - algoritmos de ruteo sobre grafos (v7.4.0)
+
+2. Nuevo servicio Postmaster (reemplaza HA Service en clusters sin mirrors) - v7.2.0
+3. Compresión avanzada Zstd (en AO columnar con RLE+Zstd) - v7.2.0
+4. Mejoras de ORCA
+
+    * Soporte a prepared statements, funciones parametrizadas, DISTINCT en funciones ventana, full hash joins - v7.2.0
+    * Optimización de consumo de memoria, soporte row expressions y SIRV - v7.4.0
+
+5. Python 3.11 (antes 3.9 en 7.1.0) - v7.2.0
+6. gpMLBot + mejoras ML
+
+    * gpMLBot (orquestación MADlib + PostgresML) - v7.3.0
+    * Nuevas funciones PostgresML y mejoras CatBoost - v7.1.0 ya tenía CatBoost, ampliado en releases siguientes
+
+7. Nuevas vistas/funciones en gp_toolkit
+    * Funciones para contar CPUs - v7.3.0
+    * Vistas de bloat (gp_bloat_estimates, gp_bloat_estimates_appendoptimized, gp_bloat_diag_appendoptimized) - v7.4.0
+    * Vistas de procesos huérfanos (gp_orphaned_backends) - v7.4.0
+    * Función gp_cleanup_unused_rp_snapshots - v7.4.0
+
+8. Nuevo utilitario gpmigrate (validar compatibilidad GP6 ↔ GP7) - v7.4.0
+9. Parches críticos de seguridad (CVE)
+
+    * CVE-2023-5868 (agregados text, memory leak) - v7.4.1
+    * CVE-2025-1094 (quoting APIs) - v7.4.1

@@ -1,1 +1,69 @@
-# greenplum_course
+# Curso de Greenplum
+
+## Path
+```bash
+cd /greenplum_course/docker-greenplum/docker-compose
+```
+
+## Pull y tag de la imagen
+```bash
+docker pull woblerr/greenplum:7.1.0
+
+docker tag woblerr/greenplum:7.1.0 greenplum:7.1.0
+```
+
+## Secrets requeridos por docker-compose
+```bash
+echo -n "gparray"  > /greenplum_course/docker-greenplum/docker-compose/secrets/gpdb_password
+
+echo -n "changeme" > /greenplum_course/docker-greenplum/docker-compose/secrets/gpmon_password
+```
+
+## Permisos de llaves SSH
+```bash
+chmod 600 /greenplum_course/docker-greenplum/docker-compose/conf/ssh/id_rsa
+
+chmod 644 /greenplum_course/docker-greenplum/docker-compose/conf/ssh/id_rsa.pub
+
+chmod 600 /greenplum_course/docker-greenplum/docker-compose/conf/ssh/authorized_keys
+```
+
+## Cambiar a GPDB 7 en .env
+- modificar el archivo
+```
+/greenplum_course/docker-greenplum/docker-compose/.env
+```
+
+- usar esto
+```env
+TAG=7.1.0
+CONFIG_FOLDER="7"
+EXPOSE_MASTER_PORT=5432
+```
+
+## Levantar el clúster
+```bash
+docker compose -f /greenplum_course/docker-greenplum/docker-compose/docker-compose.with_mirrors.yaml up -d
+```
+
+## Verificaciones básicas
+```bash
+docker ps
+
+docker exec -u gpadmin master bash -lc 'gpstate -s'
+
+docker exec -u gpadmin master bash -lc 'psql -d demo -c "SELECT version();"'
+
+docker exec -u gpadmin master bash -lc "psql -d demo -Atc \"SELECT extname FROM pg_extension WHERE extname IN ('pxf','diskquota');\""
+
+docker exec -u gpadmin master bash -lc 'pxf cluster status'
+```
+
+---
+
+# Links
+
+- [greenplum-dockers](https://greenplum-dockers.readthedocs.io/en/latest/README/)
+- [repos kongyew](https://github.com/kongyew?page=2&tab=repositories)
+- [repos woblerr](https://github.com/woblerr?tab=repositories)
+- [repo docker-greenplum](https://github.com/woblerr/docker-greenplum/tree/master)
