@@ -1,0 +1,5 @@
+Flask
+confluent-kafka
+kafka-python
+psycopg2-binary
+requests
