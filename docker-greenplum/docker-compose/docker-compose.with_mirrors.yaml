@@ -61,6 +61,34 @@ services:
     networks:
       - greenplum
 
+  segment3:
+    image: greenplum:${TAG}
+    container_name: segment3
+    hostname: segment3
+    command: /start_gpdb.sh "00:primary" "01:primary" "00:mirror" "01:mirror"
+    environment:
+      - GREENPLUM_DEPLOYMENT=segment
+    volumes:
+      # - gpdb-segment3-data:/data
+      - ./conf/ssh/authorized_keys:/tmp/authorized_keys
+    stop_grace_period: 60s
+    networks:
+      - greenplum
+
+  segment4:
+    image: greenplum:${TAG}
+    container_name: segment4
+    hostname: segment4
+    command: /start_gpdb.sh "00:primary" "01:primary" "00:mirror" "01:mirror"
+    environment:
+      - GREENPLUM_DEPLOYMENT=segment
+    volumes:
+      # - gpdb-segment4-data:/data
+      - ./conf/ssh/authorized_keys:/tmp/authorized_keys
+    stop_grace_period: 60s
+    networks:
+      - greenplum
+
 networks:
   greenplum:
 
@@ -68,6 +96,8 @@ networks:
 #  gpdb-master-data:
 #  gpdb-segment1-data:
 #  gpdb-segment2-data:
+#  gpdb-segment3-data:
+#  gpdb-segment4-data:
 
 secrets:
   gpdb_password:
